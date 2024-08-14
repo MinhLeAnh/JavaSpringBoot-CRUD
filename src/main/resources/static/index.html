@@ -1,160 +1,347 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SanPham CRUD</title>
+    <!-- Bootstrap CSS -->
+    <link
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+            rel="stylesheet"
+    />
     <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
         .container {
             max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-        }
-        .form-group button {
-            padding: 10px 15px;
-            font-size: 16px;
+            margin-top: 20px;
         }
         #product-list {
             margin-top: 20px;
         }
-        #product-list table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        #product-list th, #product-list td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-        #product-list th {
-            background-color: #f4f4f4;
+        #product-list img {
+            max-width: 50px;
+            height: auto;
         }
     </style>
+    <script src="script.js"></script>
 </head>
 <body>
 <div class="container">
-    <h1>SanPham CRUD</h1>
-    <div class="form-group">
-        <h2>Add Product</h2>
-        <label for="name">Name:</label>
-        <input type="text" id="name" placeholder="Product Name">
-        <label for="price">Price:</label>
-        <input type="number" id="price" placeholder="Product Price">
-        <label for="discount">Discount:</label>
-        <input type="number" id="discount" placeholder="Product Discount">
-        <label for="image">Image URL:</label>
-        <input type="text" id="image" placeholder="Product Image URL">
-        <label for="description">Description:</label>
-        <input type="text" id="description" placeholder="Product Description">
-        <label for="category">Category:</label>
-        <input type="text" id="category" placeholder="Product Category">
-        <label for="status">Status:</label>
-        <input type="text" id="status" placeholder="Product Status">
-        <button onclick="addProduct()">Add Product</button>
-    </div>
-
     <div id="product-list">
-        <h2>Product List</h2>
-        <table>
+        <h2>Danh sách sản phẩm</h2>
+        <table class="table table-striped">
             <thead>
             <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Discount</th>
-                <th>Image</th>
-                <th>Description</th>
-                <th>Category</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th>ID sản phẩm</th>
+                <th>Tên sản phẩm</th>
+                <th>Giá sản phẩm</th>
+                <th>Giá khuyến mại</th>
+                <th>Hình ảnh</th>
+                <th>Mô tả</th>
+                <th>Danh mục</th>
+                <th>Trạng thái</th>
+                <th></th>
             </tr>
             </thead>
-            <tbody id="product-tbody">
-            </tbody>
+            <tbody id="product-tbody"></tbody>
         </table>
+    </div>
+
+    <div>
+        <div class="input-group mb-3">
+            <button class="btn btn-info" type="button" id="button-search" onclick="searchProducts()">
+                Tìm kiếm
+            </button>
+            <select
+                    class="form-select ml-2 mr-2"
+                    id="inputGroupSelect01"
+                    onchange="handleSearchOptionChange()"
+            >
+                <option selected>Chọn...</option>
+                <option value="1">Theo tên</option>
+                <option value="2">Theo khoảng giá</option>
+            </select>
+            <div id="search-inputs">
+                <input
+                        type="text"
+                        class="form-control ml-2"
+                        id="search-input"
+                        placeholder="Nhập từ khóa tìm kiếm"
+                />
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-primary" onclick="showAddProductForm()">
+        Thêm sản phẩm
+    </button>
+
+    <div class="form-group" style="display: none; margin-top:10px">
+        <h3>Hãy nhập các thông tin của sản phẩm bạn muốn thêm</h3>
+        <label for="Id" id = "Id_lable">ID:</label>
+        <input type="text" id="Id" class="form-control" placeholder="ID" />
+        <label for="name">Tên sản phẩm:</label>
+        <input
+                type="text"
+                id="name"
+                class="form-control"
+                placeholder="Tên sản phẩm"
+        />
+        <label for="price" class="mt-2">Giá sản phẩm:</label>
+        <input
+                type="number"
+                id="price"
+                class="form-control"
+                placeholder="Giá sản phẩm"
+        />
+        <label for="discount" class="mt-2">Giá khuyến mại:</label>
+        <input
+                type="number"
+                id="discount"
+                class="form-control"
+                placeholder="Giá khuyến mại"
+        />
+        <label for="image" class="mt-2">URL hình ảnh:</label>
+        <input
+                type="text"
+                id="image"
+                class="form-control"
+                placeholder="URL hình ảnh"
+        />
+        <label for="description" class="mt-2">Mô tả:</label>
+        <input
+                type="text"
+                id="description"
+                class="form-control"
+                placeholder="Mô tả sản phẩm"
+        />
+        <label for="category" class="mt-2">Danh mục:</label>
+        <select id="category" class="form-control">
+            <option value="Điện tử">Điện tử</option>
+            <option value="Gia dụng">Gia dụng</option>
+            <option value="Thời trang">Thời trang</option>
+        </select>
+
+        <label for="status" class="mt-2">Trạng thái:</label>
+        <input
+                type="text"
+                id="status"
+                class="form-control"
+                placeholder="Trạng thái sản phẩm"
+        />
+        <button class="btn btn-primary mt-3" onclick="addProduct()">
+            Thêm sản phẩm
+        </button>
     </div>
 </div>
 
+<!-- Axios -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 <script>
-    const apiUrl = 'http://localhost:8080/api/v1/sanpham'; // Replace with your backend API URL
+    const apiUrl = "http://localhost:8080/sanpham"; // Replace with your backend API URL
 
     // Function to fetch and display products
     function fetchProducts() {
-        fetch(apiUrl + '/list')
-            .then(response => response.json())
-            .then(data => {
-                const tbody = document.getElementById('product-tbody');
-                tbody.innerHTML = '';
-                data.forEach(product => {
-                    const row = document.createElement('tr');
+        axios
+            .get(apiUrl + "/list")
+            .then((response) => {
+                const tbody = document.getElementById("product-tbody");
+                tbody.innerHTML = "";
+                response.data.forEach((product) => {
+                    const row = document.createElement("tr");
                     row.innerHTML = `
-                            <td>${product.id}</td>
-                            <td>${product.ten}</td>
-                            <td>${product.giaSanPham}</td>
-                            <td>${product.giaKhuyenMai}</td>
-                            <td><img src="${product.hinhAnh}" alt="Image" style="width: 50px; height: auto;"></td>
-                            <td>${product.moTa}</td>
-                            <td>${product.danhMuc}</td>
-                            <td>${product.trangThai}</td>
-                            <td><button onclick="deleteProduct(${product.id})">Delete</button></td>
-                        `;
+                    <td>${product.id}</td>
+                    <td>${product.ten}</td>
+                    <td>${product.giaSanPham}</td>
+                    <td>${product.giaKhuyenMai}</td>
+                    <td><img src="${product.hinhAnh}" alt="Image"></td>
+                    <td>${product.moTa}</td>
+                    <td>${product.danhMuc}</td>
+                    <td>${product.trangThai}</td>
+                    <td>
+                        <button class="btn btn-danger" onclick="deleteProduct(${product.id})">Xóa</button>
+                        <button class="btn btn-warning" onclick="editProduct(${product.id})">Sửa</button>
+                    </td>
+                `;
                     tbody.appendChild(row);
                 });
+            })
+            .catch((error) => {
+                console.error("Error fetching products:", error);
             });
     }
 
     // Function to add a new product
     function addProduct() {
         const product = {
-            ten: document.getElementById('name').value,
-            giaSanPham: parseFloat(document.getElementById('price').value),
-            giaKhuyenMai: parseFloat(document.getElementById('discount').value),
-            hinhAnh: document.getElementById('image').value,
-            moTa: document.getElementById('description').value,
-            danhMuc: document.getElementById('category').value,
-            trangThai: document.getElementById('status').value
+            id: document.getElementById("Id").value,
+            ten: document.getElementById("name").value,
+            giaSanPham: parseFloat(document.getElementById("price").value),
+            giaKhuyenMai: parseFloat(document.getElementById("discount").value),
+            hinhAnh: document.getElementById("image").value,
+            moTa: document.getElementById("description").value,
+            danhMuc: document.getElementById("category").value,
+            trangThai: document.getElementById("status").value,
         };
 
-        fetch(apiUrl + '/save', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(product)
-        })
-            .then(response => response.json())
+        axios
+            .post(apiUrl + "/save", product)
             .then(() => {
                 fetchProducts();
+                // Hide the form after adding product
+                document.querySelector(".form-group").style.display = "none";
+            })
+            .catch((error) => {
+                console.error("Error adding product:", error);
             });
     }
 
-    // Function to delete a product by ID
+    // Function to delete a product
     function deleteProduct(id) {
-        fetch(apiUrl + '/delete/' + id, {
-            method: 'GET'
-        })
-            .then(response => response.json())
+        if (confirm("Are you sure you want to delete this product?")) {
+            axios
+                .delete(apiUrl + "/delete/" + id)
+                .then(() => {
+                    fetchProducts();
+                })
+                .catch((error) => {
+                    console.error("Error deleting product:", error);
+                    alert("Error deleting product. Please try again.");
+                });
+        }
+    }
+
+    // Function to show the form for adding or updating a product
+    function showAddProductForm() {
+        const form = document.querySelector(".form-group");
+        form.style.display = "block";
+        // Reset form fields
+        form.querySelector("h3").innerText="Hãy nhập các thông tin của sản phẩm bạn muốn thêm";
+        form.querySelector("button").innerText = "Thêm sản phẩm";
+        form.querySelector("button").setAttribute("onclick", "addProduct()");
+    }
+
+    // Function to handle showing the edit form with pre-filled values
+    function editProduct(id) {
+        const form = document.querySelector(".form-group");
+        form.style.display = "block";
+        // Reset form fields
+        form.querySelector("button").innerText = "Cập nhật sản phẩm";
+        form.querySelector("button").setAttribute("onclick", "updateProduct()");
+        form.querySelector("h3").innerText="Hãy nhập các thông tin của sản phẩm bạn muốn sửa";
+        form.querySelector("#Id").value=id;
+    }
+
+    // Function to update an existing product
+    function updateProduct() {
+        const product = {
+            id: document.getElementById("Id").value,
+            ten: document.getElementById("name").value,
+            giaSanPham: parseFloat(document.getElementById("price").value),
+            giaKhuyenMai: parseFloat(document.getElementById("discount").value),
+            hinhAnh: document.getElementById("image").value,
+            moTa: document.getElementById("description").value,
+            danhMuc: document.getElementById("category").value,
+            trangThai: document.getElementById("status").value,
+        };
+
+        axios
+            .post(apiUrl + "/update", product)
             .then(() => {
                 fetchProducts();
+                // Hide the form after updating product
+                document.querySelector(".form-group").style.display = "none";
+            })
+            .catch((error) => {
+                console.error("Error updating product:", error);
             });
+    }
+    // Function to handle search option change
+    function handleSearchOptionChange() {
+        const searchInputs = document.getElementById("search-inputs");
+        searchInputs.innerHTML = '';
+
+        const selectedOption = document.getElementById("inputGroupSelect01").value;
+        if (selectedOption === "1") {
+            searchInputs.innerHTML = `
+            <input type="text" class="form-control ml-2" id="search-input" placeholder="Nhập từ khóa tìm kiếm" />
+        `;
+        } else if (selectedOption === "2") {
+            searchInputs.innerHTML = `
+            <input type="number" class="form-control ml-2" id="min-price" placeholder="Giá thấp nhất" />
+            <input type="number" class="form-control ml-2" id="max-price" placeholder="Giá cao nhất" />
+        `;
+        }
+    }
+
+    function searchProducts() {
+        const selectedOption = document.getElementById("inputGroupSelect01").value;
+        const tbody = document.getElementById("product-tbody");
+        tbody.innerHTML = ""; // Clear the table initially
+        if (selectedOption === "1") {
+            const keyword = document.getElementById("search-input").value;
+            axios
+                .get(apiUrl + `/search?keyword=${keyword}`)
+                .then((response) => {
+                    if (response.data.length > 0) {
+                        response.data.forEach((product) => {
+                            const row = document.createElement("tr");
+                            row.innerHTML = `
+                            <td>${product.id}</td>
+                            <td>${product.ten}</td>
+                            <td>${product.giaSanPham}</td>
+                            <td>${product.giaKhuyenMai}</td>
+                            <td><img src="${product.hinhAnh}" alt="Image"></td>
+                            <td>${product.moTa}</td>
+                            <td>${product.danhMuc}</td>
+                            <td>${product.trangThai}</td>
+                            <td>
+                                <button class="btn btn-danger" onclick="deleteProduct(${product.id})">Xóa</button>
+                                <button class="btn btn-warning" onclick="editProduct(${product.id})">Sửa</button>
+                            </td>
+                        `;
+                            tbody.appendChild(row);
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error searching products:", error);
+                });
+        } else if (selectedOption === "2") {
+            const minPrice = parseFloat(document.getElementById("min-price").value);
+            const maxPrice = parseFloat(document.getElementById("max-price").value);
+            axios
+                .get(apiUrl + `/search?giaThap=${minPrice}&giaCao=${maxPrice}`)
+                .then((response) => {
+                    if (response.data.length > 0) {
+                        response.data.forEach((product) => {
+                            const row = document.createElement("tr");
+                            row.innerHTML = `
+                            <td>${product.id}</td>
+                            <td>${product.ten}</td>
+                            <td>${product.giaSanPham}</td>
+                            <td>${product.giaKhuyenMai}</td>
+                            <td><img src="${product.hinhAnh}" alt="Image"></td>
+                            <td>${product.moTa}</td>
+                            <td>${product.danhMuc}</td>
+                            <td>${product.trangThai}</td>
+                            <td>
+                                <button class="btn btn-danger" onclick="deleteProduct(${product.id})">Xóa</button>
+                                <button class="btn btn-warning" onclick="editProduct(${product.id})">Sửa</button>
+                            </td>
+                        `;
+                            tbody.appendChild(row);
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error searching products:", error);
+                });
+        }
     }
 
     // Initial fetch of products
     fetchProducts();
+
 </script>
 </body>
 </html>

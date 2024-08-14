@@ -16,8 +16,9 @@ public class SpRepository implements ISpRepository {
 
     @Override
     public int save(SanPham sanPham) {
-        String sql = "INSERT INTO SanPham (Ten, GiaSanPham, GiaKhuyenMai, HinhAnh, MoTa, DanhMuc, TrangThai) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO SanPham (Id,Ten, GiaSanPham, GiaKhuyenMai, HinhAnh, MoTa, DanhMuc, TrangThai) VALUES (?,?, ?, ?, ?, ?, ?, ?)";
         return jdbcTemplate.update(sql, new Object[]{
+                sanPham.getId(),
                 sanPham.getTen(),
                 sanPham.getGiaSanPham(),
                 sanPham.getGiaKhuyenMai(),
@@ -47,11 +48,11 @@ public class SpRepository implements ISpRepository {
     public int deleteById(int id) {
         String sql = "DELETE FROM SanPham WHERE Id=?";
         return jdbcTemplate.update(sql, new Object[]{id});
-    }
+}
 
     @Override
     public List<SanPham> findAll() {
-        String sql = "SELECT * FROM SanPham WHERE TrangThai=N'Còn hàng'";
+        String sql = "SELECT * FROM SanPham";
         return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(SanPham.class));
     }
 
@@ -60,4 +61,11 @@ public class SpRepository implements ISpRepository {
         String sql = "SELECT * FROM SanPham WHERE Id=?";
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, BeanPropertyRowMapper.newInstance(SanPham.class));
     }
+
+    @Override
+    public List<SanPham> findByPriceRange(int giaThap, int giaCao) {
+        String sql = "SELECT * FROM SanPham WHERE GiaKhuyenMai BETWEEN ? AND ?";
+        return jdbcTemplate.query(sql, new Object[]{giaThap, giaCao}, BeanPropertyRowMapper.newInstance(SanPham.class));
+    }
+
 }

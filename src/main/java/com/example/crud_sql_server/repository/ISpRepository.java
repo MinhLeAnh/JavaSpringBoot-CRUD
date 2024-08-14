@@ -10,4 +10,6 @@ public interface ISpRepository {
     int deleteById(int id);
     List<SanPham> findAll();
     SanPham findById(int id);
+    List<SanPham> findByPriceRange(int giaThap, int giaCao);
+
 }

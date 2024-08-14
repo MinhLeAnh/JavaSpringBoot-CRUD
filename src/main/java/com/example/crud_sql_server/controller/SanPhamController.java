@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/sanpham")
+@RequestMapping("/sanpham")
 @CrossOrigin("*")
 public class SanPhamController {
 
@@ -44,14 +44,36 @@ public class SanPhamController {
         return new ResponseEntity<>(serviceResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<ServiceResponse> delete(@PathVariable int id) {
         ServiceResponse serviceResponse = new ServiceResponse();
         int result = sanPhamService.deleteById(id);
         if (result == 1) {
-            serviceResponse.setMessage("Item removed with success");
+            serviceResponse.setMessage("Item removed successfully");
+            return new ResponseEntity<>(serviceResponse, HttpStatus.OK);
+        } else {
+            serviceResponse.setMessage("Item not found or could not be deleted");
+            return new ResponseEntity<>(serviceResponse, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(serviceResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<SanPham>> findByPriceRange(
+            @RequestParam("giaThap") int giaThap,
+            @RequestParam("giaCao") int giaCao) {
+        List<SanPham> sanPhams = sanPhamService.findByPriceRange(giaThap, giaCao);
+        return new ResponseEntity<>(sanPhams, HttpStatus.OK);
+    }
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SanPham> findById(@PathVariable int id) {
+        SanPham sanPham = sanPhamService.findById(id);
+        if (sanPham != null) {
+            return new ResponseEntity<>(sanPham, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }
 

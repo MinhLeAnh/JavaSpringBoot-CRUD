@@ -37,4 +37,9 @@ public class SpService implements ISpService {
     public int deleteById(int id) {
         return spRepository.deleteById(id);
     }
+
+    @Override
+    public List<SanPham> findByPriceRange(int giaThap, int giaCao) {
+        return spRepository.findByPriceRange(giaThap, giaCao);
+    }
 }
