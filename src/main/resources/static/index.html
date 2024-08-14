@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SanPham CRUD</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .form-group button {
+            padding: 10px 15px;
+            font-size: 16px;
+        }
+        #product-list {
+            margin-top: 20px;
+        }
+        #product-list table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        #product-list th, #product-list td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        #product-list th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>SanPham CRUD</h1>
+    <div class="form-group">
+        <h2>Add Product</h2>
+        <label for="name">Name:</label>
+        <input type="text" id="name" placeholder="Product Name">
+        <label for="price">Price:</label>
+        <input type="number" id="price" placeholder="Product Price">
+        <label for="discount">Discount:</label>
+        <input type="number" id="discount" placeholder="Product Discount">
+        <label for="image">Image URL:</label>
+        <input type="text" id="image" placeholder="Product Image URL">
+        <label for="description">Description:</label>
+        <input type="text" id="description" placeholder="Product Description">
+        <label for="category">Category:</label>
+        <input type="text" id="category" placeholder="Product Category">
+        <label for="status">Status:</label>
+        <input type="text" id="status" placeholder="Product Status">
+        <button onclick="addProduct()">Add Product</button>
+    </div>
+
+    <div id="product-list">
+        <h2>Product List</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Discount</th>
+                <th>Image</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="product-tbody">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const apiUrl = 'http://localhost:8080/api/v1/sanpham'; // Replace with your backend API URL
+
+    // Function to fetch and display products
+    function fetchProducts() {
+        fetch(apiUrl + '/list')
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.getElementById('product-tbody');
+                tbody.innerHTML = '';
+                data.forEach(product => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                            <td>${product.id}</td>
+                            <td>${product.ten}</td>
+                            <td>${product.giaSanPham}</td>
+                            <td>${product.giaKhuyenMai}</td>
+                            <td><img src="${product.hinhAnh}" alt="Image" style="width: 50px; height: auto;"></td>
+                            <td>${product.moTa}</td>
+                            <td>${product.danhMuc}</td>
+                            <td>${product.trangThai}</td>
+                            <td><button onclick="deleteProduct(${product.id})">Delete</button></td>
+                        `;
+                    tbody.appendChild(row);
+                });
+            });
+    }
+
+    // Function to add a new product
+    function addProduct() {
+        const product = {
+            ten: document.getElementById('name').value,
+            giaSanPham: parseFloat(document.getElementById('price').value),
+            giaKhuyenMai: parseFloat(document.getElementById('discount').value),
+            hinhAnh: document.getElementById('image').value,
+            moTa: document.getElementById('description').value,
+            danhMuc: document.getElementById('category').value,
+            trangThai: document.getElementById('status').value
+        };
+
+        fetch(apiUrl + '/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(product)
+        })
+            .then(response => response.json())
+            .then(() => {
+                fetchProducts();
+            });
+    }
+
+    // Function to delete a product by ID
+    function deleteProduct(id) {
+        fetch(apiUrl + '/delete/' + id, {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(() => {
+                fetchProducts();
+            });
+    }
+
+    // Initial fetch of products
+    fetchProducts();
+</script>
+</body>
+</html>
